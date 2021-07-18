@@ -18,30 +18,48 @@ using std::vector;
 
 namespace fs = std::filesystem;
 
+string LinuxParser::TransformInput(string input, map<char, char> inpTrans) {
+  string output = input;
+  for (auto const inpChar : inpTrans) {
+    std::replace(output.begin(), output.end(), inpChar.first, inpChar.second);
+  }
+  return output;
+}
+
+map<string, string> LinuxParser::findValueByKey(vector<string> keyFilter,
+                                                string filePath,
+                                                map<char, char> inpTrans,
+                                                map<char, char> opTrans) {
+  string line, key, value;
+  map<string, string> keyValueMap;
+  std::ifstream fileStream(filePath);
+  if (fileStream.is_open()) {
+    while (std::getline(fileStream, line)) {
+      string newLine = TransformInput(line, inpTrans);
+      std::istringstream lineStream(newLine);
+      if (lineStream >> key >> value) {
+        for (auto const keyName : keyFilter)
+          if (key == keyName) keyValueMap.insert({key, value});
+      }
+      fileStream.close();
+    }
+  }
+  for (auto keyValue : keyValueMap)
+    keyValue.second = TransformInput(keyValue.second, opTrans);
+
+  return keyValueMap;
+}
 /* Fetches name of Operating System */
 string LinuxParser::OperatingSystem() {
-  string line;
-  string key;
-  string value;
-  std::ifstream filestream(kOSPath);
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::replace(line.begin(), line.end(), ' ', '_');
-      std::replace(line.begin(), line.end(), '=', ' ');
-      std::replace(line.begin(), line.end(), '"', ' ');
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == osName) {
-          std::replace(value.begin(), value.end(), '_', ' ');
-          return value;
-        }
-      }
-    }
-    filestream.close();
+  map<char, char> inpTrans = {{' ', '_'}, {'=', ' '}, {'"', ' '}};
+  map<char, char> opTrans = {{'_', ' '}};
+  map<string, string> keyValue =
+      findValueByKey({osName}, kOSPath, inpTrans, opTrans);
+  if (keyValue.find(osName) != keyValue.end()) {
+    return keyValue[osName];
   }
-  return value;
+  return "";
 }
-/* Fetches name of kernel */
 string LinuxParser::Kernel() {
   string os, kernel, version;
   string line;
@@ -59,7 +77,7 @@ string LinuxParser::Kernel() {
 vector<int> LinuxParser::Pids() {
   const fs::path dir{kProcDirectory};
   vector<int> processIds;
-  for (const auto& file : fs::directory_iterator(dir)) {
+  for (const auto &file : fs::directory_iterator(dir)) {
     if (file.is_directory()) {
       string dirName = file.path().stem().string();
       if (std::all_of(dirName.begin(), dirName.end(), isdigit))
@@ -126,7 +144,8 @@ std::vector<uint64_t> LinuxParser::FetchCPUTimeInDiffStates(string cpuId) {
   }
   return values;
 }
-/* Returns the aggregate data of all the cpus, overloaded with below function */
+/* Returns the aggregate data of all the cpus, overloaded with below function
+ */
 std::vector<uint64_t> LinuxParser::GetTimeSpentInDiffStates() {
   return FetchCPUTimeInDiffStates("");
 }
@@ -160,10 +179,10 @@ string LinuxParser::Command(int pid) {
   string line;
   std::ifstream fileStream(kProcDirectory + to_string(pid) + kCmdlineFilename);
   if (fileStream.is_open()) {
-    if (std::getline(fileStream, line)) return line;
+    if (!std::getline(fileStream, line)) line = "";
     fileStream.close();
   }
-  return "";
+  return line;
 }
 
 /* Returns the memory utilization of each process in MB*/
@@ -196,7 +215,6 @@ string LinuxParser::Uid(int pid) {
       if (stream >> key >> value)
         if (key == filterUID) return value;
     }
-    fileStream.close();
   }
   return "";
 }
@@ -212,7 +230,6 @@ string LinuxParser::User(int pid) {
       while (getline(strStream, key, ':')) lineTokens.emplace_back(key);
       if (lineTokens[2] == uid) return lineTokens[0];
     }
-    fileStream.close();
   }
   return "";
 }
@@ -241,8 +258,8 @@ long int LinuxParser::UpTime(int pid) {
   return upTime;
 }
 
-/* The below code is another implementation of the process utilization which can
- * be used */
+/* The below code is another implementation of the process utilization which
+ * can be used */
 float LinuxParser::CpuUtilization(int pid) {
   vector<string> processStat = ProcessStatusValues(pid);
   uint64_t utime = stoull(processStat[13]);
@@ -269,7 +286,6 @@ int LinuxParser::NumCores() {
           return stoi(value);
       }
     }
-    fileStream.close();
   }
   return 0;
 }

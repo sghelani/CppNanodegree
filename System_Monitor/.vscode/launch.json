@@ -8,7 +8,7 @@
             "name": "g++ - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/sghelani/C++Projects/CppND-System-Monitor/build/monitor",
+            "program": "/home/sghelani/C++Projects/CppNanodegree/System_Monitor/build/monitor",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",

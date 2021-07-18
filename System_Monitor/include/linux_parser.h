@@ -46,6 +46,13 @@ std::string OperatingSystem();
 std::string Kernel();
 int NumCores();
 
+// Helper functions
+std::map<std::string, std::string> findValueByKey(
+    std::vector<std::string> keyFilter, std::string filePath,
+    std::map<char, char> inpTrans, std::map<char, char> opTrans);
+
+std::string TransformInput(std::string input, std::map<char, char> inpTrans);
+
 // CPU
 enum CPUStates {
   kUser_ = 0,
