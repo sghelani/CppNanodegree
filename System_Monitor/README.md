@@ -1,7 +1,8 @@
 # System-Monitor
-* Developed a Linux based Systems monitor which displays the CPU and Memory utilization of each CPU core and each of the processes like the popular Htop application.
+* Developed a Linux based Systems monitor using C++ which displays the CPU and Memory utilization of each CPU core and each of the processes like the popular Htop application.
+
 ![System Monitor](images/Capture.PNG)
-* This project was developed using C++
+
 
 ## Highlights
 * The monitor displays the varying CPU utilization for each CPU core in the system and also the memory utilization of the whole system.
@@ -21,6 +22,7 @@ This project uses [Make](https://www.gnu.org/software/make/). The Makefile has f
 ## Run instructions
 * Install ncurses(If not installed): sudo apt install libncurses5-dev libncursesw5-dev
 * Clone the project repository: git clone https://github.com/sghelani/CppNanodegree.git
+* Go into the project folder: cd System_Monitor
 * Build the project: make build
 * Run the resulting executable: ./build/monitor
 
