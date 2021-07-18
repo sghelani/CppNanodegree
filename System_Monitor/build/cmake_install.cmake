@@ -1,4 +1,4 @@
-# Install script for directory: /home/sghelani/C++Projects/CppND-System-Monitor
+# Install script for directory: /home/sghelani/CppNanodegree/System_Monitor
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/sghelani/C++Projects/CppND-System-Monitor/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/sghelani/CppNanodegree/System_Monitor/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

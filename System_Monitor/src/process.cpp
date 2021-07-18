@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 
+#include <cassert>
 #include <cctype>
 #include <sstream>
 #include <string>
@@ -30,6 +31,7 @@ void Process::RefreshAttributes() {
 float Process::CalculateUtilization() {
   vector<uint64_t> aggregateCpuTimes = LinuxParser::GetTimeSpentInDiffStates();
   vector<string> processStat = LinuxParser::ProcessStatusValues(Pid());
+  assert(processStat.size() > 13);
   uint64_t curProcTotal = stoull(processStat[13]) + stoull(processStat[14]);
   auto [prevProcTotal, prevCpuTotal] = PrevUtilizationValues();
   uint64_t curCpuTotal = 0ULL;

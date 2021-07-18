@@ -1,3 +1,3 @@
-/home/sghelani/C++Projects/CppND-System-Monitor/build/CMakeFiles/rebuild_cache.dir
-/home/sghelani/C++Projects/CppND-System-Monitor/build/CMakeFiles/edit_cache.dir
-/home/sghelani/C++Projects/CppND-System-Monitor/build/CMakeFiles/monitor.dir
+/home/sghelani/CppNanodegree/System_Monitor/build/CMakeFiles/rebuild_cache.dir
+/home/sghelani/CppNanodegree/System_Monitor/build/CMakeFiles/edit_cache.dir
+/home/sghelani/CppNanodegree/System_Monitor/build/CMakeFiles/monitor.dir
