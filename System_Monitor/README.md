@@ -1,22 +1,16 @@
-# CppND-System-Monitor
+# System-Monitor
+* Developed a Linux based Systems monitor using C++ which displays the CPU and Memory utilization of each CPU core and each of the processes like the popular Htop application.
 
-Starter code for System Monitor Project in the Object Oriented Programming Course of the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). 
+  ![System Monitor](images/Capture.PNG)
 
-Follow along with the classroom lesson to complete the project!
-
-![System Monitor](images/monitor.png)
-
-## Udacity Linux Workspace
-[Udacity](https://www.udacity.com/) provides a browser-based Linux [Workspace](https://engineering.udacity.com/creating-a-gpu-enhanced-virtual-desktop-for-udacity-497bdd91a505) for students. 
-
-You are welcome to develop this project on your local machine, and you are not required to use the Udacity Workspace. However, the Workspace provides a convenient and consistent Linux development environment we encourage you to try.
+## Highlights
+* The monitor displays the varying CPU utilization for each CPU core in the system and also the memory utilization of the whole system.
+* The monitor displays the varying resource utilization of the top 15 processes sorted by CPU Utilization.
+* It Displays other miscellaneous information related to system and processes.
+* The data displayed on the screen gets refreshed every second.
 
 ## ncurses
 [ncurses](https://www.gnu.org/software/ncurses/) is a library that facilitates text-based graphical output in the terminal. This project relies on ncurses for display output.
-
-Within the Udacity Workspace, `.student_bashrc` automatically installs ncurses every time you launch the Workspace.
-
-If you are not using the Workspace, install ncurses within your own Linux environment: `sudo apt install libncurses5-dev libncursesw5-dev`
 
 ## Make
 This project uses [Make](https://www.gnu.org/software/make/). The Makefile has four targets:
@@ -25,17 +19,14 @@ This project uses [Make](https://www.gnu.org/software/make/). The Makefile has f
 * `debug` compiles the source code and generates an executable, including debugging symbols
 * `clean` deletes the `build/` directory, including all of the build artifacts
 
-## Instructions
+## Run instructions
+* Install ncurses(If not installed): sudo apt install libncurses5-dev libncursesw5-dev
+* Clone the project repository: git clone https://github.com/sghelani/CppNanodegree.git
+* Go into the project folder: cd System_Monitor
+* Clear the build dir: make clean
+* Build the project newly: make build
+* Run the resulting executable: ./build/monitor
 
-1. Clone the project repository: `git clone https://github.com/udacity/CppND-System-Monitor-Project-Updated.git`
+## References
+* Starter code for System Monitor Project in the Object Oriented Programming Course of the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). 
 
-2. Build the project: `make build`
-
-3. Run the resulting executable: `./build/monitor`
-![Starting System Monitor](images/starting_monitor.png)
-
-4. Follow along with the lesson.
-
-5. Implement the `System`, `Process`, and `Processor` classes, as well as functions within the `LinuxParser` namespace.
-
-6. Submit!

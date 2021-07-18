@@ -6,5 +6,5 @@ CXX_FLAGS =   -Wall -Wextra -std=gnu++17
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/sghelani/C++Projects/CppND-System-Monitor/include 
+CXX_INCLUDES = -I/home/sghelani/CppNanodegree/System_Monitor/include 
 
