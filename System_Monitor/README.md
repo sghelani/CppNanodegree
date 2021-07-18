@@ -1,8 +1,6 @@
 # System-Monitor
 * Developed a Linux based Systems monitor using C++ which displays the CPU and Memory utilization of each CPU core and each of the processes like the popular Htop application.
-
-![System Monitor](images/Capture.PNG)
-
+  ![System Monitor](images/Capture.PNG)
 
 ## Highlights
 * The monitor displays the varying CPU utilization for each CPU core in the system and also the memory utilization of the whole system.
