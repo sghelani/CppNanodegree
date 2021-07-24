@@ -24,9 +24,9 @@ class Processor {
 
  private:
   int cpuId_;
-  float utilization_;
-  uint64_t prevCpuIdleTime;
-  uint64_t prevCpuNonIdleTime;
+  float utilization_{0.0f};
+  uint64_t prevCpuIdleTime{0ULL};
+  uint64_t prevCpuNonIdleTime{0ULL};
   std::pair<uint64_t, uint64_t> CalculateCPUIdleTime(vector<uint64_t>& cpuTime);
 };
 

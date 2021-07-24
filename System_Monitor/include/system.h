@@ -37,14 +37,14 @@ class System {
   void RefreshAttributes();
 
  private:
-  float memortUtilization_;
-  long upTime_;
-  int totalProcesses_;
-  int runningProcesses_;
-  std::string kernel_;
-  std::string operatingSystem_;
-  std::vector<Processor*> cpus_;
-  std::vector<Process*> processes_;
+  float memortUtilization_{0.0f};
+  long upTime_{0L};
+  int totalProcesses_{0};
+  int runningProcesses_{0};
+  std::string kernel_{""};
+  std::string operatingSystem_{""};
+  std::vector<Processor*> cpus_{};
+  std::vector<Process*> processes_{};
 
   /* Below methods are for internal use only */
   std::map<int, Process*> MapPidToObj(vector<Process*>& processes);

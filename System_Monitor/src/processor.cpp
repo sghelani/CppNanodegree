@@ -7,7 +7,7 @@
 #include "linux_parser.h"
 using namespace LinuxParser;
 
-Processor::Processor(int id) : cpuId_(id) { PrevCpuValues({0ULL, 0ULL}); }
+Processor::Processor(int id) : cpuId_(id) {}
 
 /*Helper method which computes CPU idle time*/
 std::pair<uint64_t, uint64_t> Processor::CalculateCPUIdleTime(
@@ -24,6 +24,7 @@ std::pair<uint64_t, uint64_t> Processor::CalculateCPUIdleTime(
 float Processor::CalculateUtilization() {
   std::vector<uint64_t> currentValues =
       LinuxParser::GetTimeSpentInDiffStates(GetCpuId());
+  if (currentValues.empty()) return 0.0f;
 
   auto [prevIdle, prevNonIdle] = PrevCpuValues();
   auto [curIdle, curNonIdle] = CalculateCPUIdleTime(currentValues);
@@ -31,6 +32,7 @@ float Processor::CalculateUtilization() {
   uint64_t diffIdle = curIdle - prevIdle;
 
   PrevCpuValues({curIdle, curNonIdle});
+
   return static_cast<float>(diffTotal - diffIdle) / diffTotal;
 }
 

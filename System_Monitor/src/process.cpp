@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cctype>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -14,14 +15,13 @@ using std::to_string;
 using std::vector;
 
 /* All attributes are initialized in the constructor */
-Process::Process(int processId) {
-  Pid(processId);
-  Command(LinuxParser::Command(processId));
-  User(LinuxParser::User(processId));
-  PrevUtilizationValues({0ULL, 0ULL});
-}
+Process::Process(int processId) : processId_(processId) {}
 /* Refresh process attributes every second */
 void Process::RefreshAttributes() {
+  /* The below two attributes dont change with time */
+  if (Command().empty()) Command(LinuxParser::Command(Pid()));
+  if (User().empty()) User(LinuxParser::User(Pid()));
+  /* Gets updated every second */
   Ram(LinuxParser::Ram(Pid()));
   CpuUtilization(CalculateUtilization());
   UpTime(LinuxParser::UpTime(Pid()));
@@ -29,17 +29,17 @@ void Process::RefreshAttributes() {
 
 /* This formula has been derived from the stack overflow post */
 float Process::CalculateUtilization() {
-  vector<uint64_t> aggregateCpuTimes = LinuxParser::GetTimeSpentInDiffStates();
-  vector<string> processStat = LinuxParser::ProcessStatusValues(Pid());
-  uint64_t curProcTotal = stoull(processStat[13]) + stoull(processStat[14]);
+  vector<uint64_t> aggrCpuTimes = LinuxParser::GetTimeSpentInDiffStates();
+  vector<string> procStat = LinuxParser::ProcessStatusValues(Pid());
   auto [prevProcTotal, prevCpuTotal] = PrevUtilizationValues();
-  uint64_t curCpuTotal = 0ULL;
-  for (uint64_t cpuStateTime : aggregateCpuTimes) {
-    curCpuTotal += cpuStateTime;
-  }
-  PrevUtilizationValues({curProcTotal, curCpuTotal});
+
+  uint64_t curProcTotal = stoull(procStat[13]) + stoull(procStat[14]);
+  uint64_t curCpuTotal =
+      std::accumulate(aggrCpuTimes.begin(), aggrCpuTimes.end(), 0ULL);
   float utilization = static_cast<float>(curProcTotal - prevProcTotal) /
                       (curCpuTotal - prevCpuTotal);
+  /* The new becomes the old*/
+  PrevUtilizationValues({curProcTotal, curCpuTotal});
 
   return utilization;
 }
@@ -57,7 +57,7 @@ string Process::Command() const {
 string Process::Ram() const { return ram_; }
 string Process::User() const { return user_; }
 long int Process::UpTime() const { return upTime_; }
-std::pair<uint64_t, uint64_t> Process::PrevUtilizationValues() {
+utilPair Process::PrevUtilizationValues() {
   return {prevProcTotal_, prevCpuTotal_};
 }
 
@@ -65,11 +65,9 @@ std::pair<uint64_t, uint64_t> Process::PrevUtilizationValues() {
 void Process::Pid(int pid) { processId_ = pid; }
 void Process::User(std::string user) { user_ = user; }
 void Process::Command(std::string command) { command_ = command; }
-void Process::CpuUtilization(float cpuUtilization) {
-  cpuutilization_ = cpuUtilization;
-}
+void Process::CpuUtilization(float cpuUtil) { cpuutilization_ = cpuUtil; }
 void Process::Ram(std::string ram) { ram_ = ram; }
 void Process::UpTime(long uptime) { upTime_ = uptime; }
-void Process::PrevUtilizationValues(std::pair<uint64_t, uint64_t> pair) {
+void Process::PrevUtilizationValues(utilPair pair) {
   std::tie(prevProcTotal_, prevCpuTotal_) = pair;
 }

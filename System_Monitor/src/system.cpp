@@ -22,8 +22,6 @@ System::System() {
   for (int i = 0; i < LinuxParser::NumCores(); i++) {
     AddCpu(new Processor(i));
   }
-  Kernel(LinuxParser::Kernel());
-  OperatingSystem(LinuxParser::OperatingSystem());
 }
 /* Refresh cpu data so that latest cpu utilization values can be fetched */
 void System::RefreshCpus() {
@@ -35,13 +33,18 @@ void System::RefreshCpus() {
 
 /* System data refreshed at regular intervals */
 void System::RefreshAttributes() {
+  /* Kernel and OS name does not change with time*/
+  if (Kernel().empty()) Kernel(LinuxParser::Kernel());
+  if (OperatingSystem().empty())
+    OperatingSystem(LinuxParser::OperatingSystem());
+  /* Refreshed every second */
+  RefreshProcesses();
+  RefreshCpus();
   MemoryUtilization(LinuxParser::MemoryUtilization());
   UpTime(LinuxParser::UpTime());
   auto [totalProcs, runningProcs] = LinuxParser::FetchNumProcesses();
   TotalProcesses(totalProcs);
   RunningProcesses(runningProcs);
-  RefreshProcesses();
-  RefreshCpus();
 }
 
 /* Used to create a map of process ids with their corresponding objects */
@@ -64,11 +67,16 @@ vector<Process*> System::BuildProcessContainer() {
   vector<Process*> processObjs;
   vector<int> activeProcessIds = LinuxParser::Pids();
   std::map<int, Process*> idToObj = MapPidToObj(Processes());
+
   for (int pid : activeProcessIds) {
-    if (idToObj.find(pid) == idToObj.end())
-      processObjs.emplace_back(new Process(pid));
-    else
-      processObjs.emplace_back(idToObj[pid]);
+    Process* p =
+        idToObj.find(pid) == idToObj.end() ? new Process(pid) : idToObj[pid];
+    try {
+      p->RefreshAttributes();
+    } catch (std::exception& ex) {
+      continue;
+    }
+    processObjs.emplace_back(p);
   }
   return processObjs;
 }
@@ -76,7 +84,6 @@ vector<Process*> System::BuildProcessContainer() {
 void System::RefreshProcesses() {
   /* Process refreshing causes new cpu utilization value to be fetched */
   vector<Process*> processObjs = BuildProcessContainer();
-  for (Process* p : processObjs) p->RefreshAttributes();
   std::sort(processObjs.begin(), processObjs.end(), comparator);
   processes_ = processObjs;
 }

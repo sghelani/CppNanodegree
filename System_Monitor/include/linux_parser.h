@@ -3,10 +3,12 @@
 
 #include <map>
 #include <regex>
+#include <sstream>
 #include <string>
 #include <tuple>
-
 using std::uint64_t;
+typedef std::map<std::string, std::string> MapStrToStr;
+typedef std::map<char, char> MapChrToChr;
 
 namespace LinuxParser {
 // Paths
@@ -22,17 +24,19 @@ const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 
 // file keywords
-const std::string osName("PRETTY_NAME");
-const std::string filterMemTotalString("MemTotal");
-const std::string filterMemFreeString("MemFree");
-const std::string filterMemBufferString("Buffers");
-const std::string filterMemCacheString("Cached");
-const std::string filterProcesses("processes");
-const std::string filterRunningProcesses("procs_running");
-const std::string filterProcMem("VmRSS");
-const std::string filterUID("Uid");
-const std::string filterCpu("cpu");
-const std::string filterCores("cores");
+const std::string OsName("PRETTY_NAME");
+const std::string MemTotalString("MemTotal");
+const std::string MemFreeString("MemFree");
+const std::string MemBufferString("Buffers");
+const std::string MemCacheString("Cached");
+const std::string Processes("processes");
+const std::string NumRunningProcesses("procs_running");
+const std::string ProcMem("VmRSS");
+const std::string ProcUid("Uid");
+const std::string Cpu("cpu");
+const std::string Cores("cores");
+
+const std::string ErrorText("Process data could not be read");
 
 // System
 std::map<std::string, long> FetchSystemMemoryData();
@@ -47,11 +51,11 @@ std::string Kernel();
 int NumCores();
 
 // Helper functions
-std::map<std::string, std::string> findValueByKey(
-    std::vector<std::string> keyFilter, std::string filePath,
-    std::map<char, char> inpTrans, std::map<char, char> opTrans);
-
-std::string TransformInput(std::string input, std::map<char, char> inpTrans);
+MapStrToStr FindValueByKey(std::vector<std::string> keyFilter,
+                           std::string filePath, MapChrToChr inpTrans = {});
+std::string TransformInput(std::string input, MapChrToChr inpTrans);
+std::istringstream GetValueStream(std::string filePath);
+bool IsKeyFetched(MapStrToStr infoFetched, std::vector<std::string> keyArr);
 
 // CPU
 enum CPUStates {
