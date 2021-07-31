@@ -34,14 +34,12 @@ bool LinuxParser::IsKeyFetched(MapStrToStr infoFetched, vector<string> keyArr) {
 }
 
 std::istringstream LinuxParser::GetValueStream(std::string filePath) {
-  string line;
+  string line = "";
   std::ifstream fileStream(filePath);
-  std::istringstream lineStream("");
   if (fileStream.is_open()) {
     if (std::getline(fileStream, line)) {
       return std::istringstream(line);
     }
-    fileStream.close();
   }
   return std::istringstream("");
 }
