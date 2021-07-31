@@ -20,8 +20,8 @@ namespace fs = std::filesystem;
 
 string LinuxParser::TransformInput(string input, MapChrToChr inpTrans) {
   string output = input;
-  for (auto inpChar : inpTrans) {
-    std::replace(output.begin(), output.end(), inpChar.first, inpChar.second);
+  for (auto const& [key, val] : inpTrans) {
+    std::replace(output.begin(), output.end(), key, val);
   }
   return output;
 }
@@ -91,7 +91,7 @@ vector<int> LinuxParser::Pids() {
   const fs::path dir{kProcDirectory};
   vector<int> processIds;
 
-  for (const auto &file : fs::directory_iterator(dir)) {
+  for (const auto& file : fs::directory_iterator(dir)) {
     if (file.is_directory()) {
       string dirName = file.path().stem().string();
       if (std::all_of(dirName.begin(), dirName.end(), isdigit))

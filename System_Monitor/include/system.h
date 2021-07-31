@@ -51,6 +51,7 @@ class System {
   void RefreshProcesses();
   void RefreshCpus();
   vector<Process*> BuildProcessContainer();
+  void deleteOldProcObjs(vector<Process*>& oldObjs, vector<Process*>& newObjs);
 };
 
 #endif

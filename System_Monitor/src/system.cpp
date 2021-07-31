@@ -3,16 +3,13 @@
 #include <unistd.h>
 
 #include <algorithm>
-#include <cstddef>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
 
-using std::size_t;
 using std::string;
 using std::vector;
 
@@ -55,10 +52,6 @@ std::map<int, Process*> System::MapPidToObj(vector<Process*>& processes) {
   }
   return idToObj;
 }
-/* used for sorting purposes */
-bool comparator(const Process* a, const Process* b) {
-  return a->CpuUtilization() > b->CpuUtilization();
-}
 
 /* Builds out a new process container based on the pids */
 /* If a new process has been created then new process object will be created
@@ -81,10 +74,26 @@ vector<Process*> System::BuildProcessContainer() {
   return processObjs;
 }
 
+/* Delete unused proc objects from heap to avoid memory leaks*/
+void System::deleteOldProcObjs(vector<Process*>& oldObjs,
+                               vector<Process*>& newObjs) {
+  std::map<int, Process*> oldProcMap = MapPidToObj(oldObjs);
+  std::map<int, Process*> newProcMap = MapPidToObj(newObjs);
+
+  for (auto& [key, val] : oldProcMap) {
+    if (newProcMap.find(key) == newProcMap.end()) delete val;
+  }
+}
+
 void System::RefreshProcesses() {
   /* Process refreshing causes new cpu utilization value to be fetched */
   vector<Process*> processObjs = BuildProcessContainer();
-  std::sort(processObjs.begin(), processObjs.end(), comparator);
+  deleteOldProcObjs(processes_, processObjs);
+  std::sort(processObjs.begin(), processObjs.end(),
+            [](const Process* a, const Process* b) {
+              return a->CpuUtilization() > b->CpuUtilization();
+            });
+
   processes_ = processObjs;
 }
 
